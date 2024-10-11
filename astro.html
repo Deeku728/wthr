@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astronomical Predictions</title>
+    <style>
+       
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom right, #0072ff, #00c6ff);
+            background-size: 400% 400%;
+            animation: gradientBG 10s ease infinite;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Container styling */
+        .container {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            width: 85%;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 30px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            color: #333;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+   
+        button {
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 64, 108, 0.5);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #ff4b2b, #ff416c);
+            box-shadow: 0 15px 30px rgba(255, 64, 108, 0.7);
+            transform: translateY(-5px);
+        }
+
+       
+        .astro-data {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+            text-align: left;
+        }
+
+        .astro-data p {
+            margin: 10px 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .astro-data strong {
+            color: #ff416c;
+        }
+
+  
+        .error {
+            margin-top: 15px;
+            color: #ff4b2b;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        /* Floating stars background */
+        @keyframes starTwinkle {
+            0% {
+                opacity: 0.3;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.3;
+            }
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            width: 2px;
+            height: 2px;
+            opacity: 0.3;
+            animation: starTwinkle 3s infinite ease-in-out;
+        }
+
+        .star:nth-child(1) {
+            top: 10%;
+            left: 20%;
+            animation-delay: -2s;
+        }
+
+        .star:nth-child(2) {
+            top: 25%;
+            left: 40%;
+            animation-delay: -1s;
+        }
+
+        .star:nth-child(3) {
+            top: 60%;
+            left: 70%;
+            animation-delay: -3s;
+        }
+
+        .star:nth-child(4) {
+            top: 80%;
+            left: 90%;
+            animation-delay: -2.5s;
+        }
+
+        .star:nth-child(5) {
+            top: 15%;
+            left: 75%;
+            animation-delay: -1.5s;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Astronomical Predictions</h1>
+        <p>Enter a location to get the sunrise, sunset, moonrise, and moonset times:</p>
+
+        <input type="text" id="location-input" placeholder="Enter city or place">
+        <button onclick="getLocationAstronomy()">Get Astronomy Info</button>
+
+        <div id="astro-info" class="astro-data">
+          
+        </div>
+
+        <p id="error-message" class="error"></p>
+    </div>
+
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+    <div class="star"></div>
+
+    <script>
+        const apiKey = 'f24a40a198fc46f7829377656d3d5e77'; 
+
+        
+        function getLocationCoordinates(location) {
+            const geoUrl = `https://api.ipgeolocation.io/astronomy?apiKey=${apiKey}&location=${location}`;
+
+            return fetch(geoUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.location) {
+                        return {
+                            latitude: data.location.latitude,
+                            longitude: data.location.longitude
+                        };
+                    } else {
+                        throw new Error('Location not found');
+                    }
+                });
+        }
+
+
+        function getAstronomyData(latitude, longitude) {
+            const astroUrl = `https://api.ipgeolocation.io/astronomy?apiKey=${apiKey}&lat=${latitude}&long=${longitude}`;
+
+            fetch(astroUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sunrise && data.sunset) {
+                        document.getElementById('astro-info').style.display = 'block';
+                        document.getElementById('astro-info').innerHTML = `
+                            <p><strong>Sunrise:</strong> ${data.sunrise}</p>
+                            <p><strong>Sunset:</strong> ${data.sunset}</p>
+                            <p><strong>Moonrise:</strong> ${data.moonrise}</p>
+                         
+                        `;
+                        document.getElementById('error-message').textContent = '';
+                    } else {
+                        document.getElementById('astro-info').style.display = 'none';
+                        document.getElementById('error-message').textContent = 'Astronomical data not available.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching astronomy data:', error);
+                    document.getElementById('astro-info').style.display = 'none';
+                    document.getElementById('error-message').textContent = 'Error retrieving data.';
+                });
+        }
+
+       
+        function getLocationAstronomy() {
+            const location = document.getElementById('location-input').value;
+
+            if (location) {
+                getLocationCoordinates(location)
+                    .then(coords => {
+                        getAstronomyData(coords.latitude, coords.longitude);
+                    })
+                    .catch(error => {
+                        document.getElementById('astro-info').style.display = 'none';
+                        document.getElementById('error-message').textContent = error.message;
+                    });
+            } else {
+                document.getElementById('error-message').textContent = 'Please enter a location.';
+            }
+        }
+    </script>
+
+</body>
+
+</html>

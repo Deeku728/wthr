@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10-Day Weather Forecast</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        header input {
+            width: 300px;
+            height: 40px;
+            border: 2px solid blue;
+            font-size: larger;
+            margin-right: 10px;
+        }
+
+        button {
+            height: 45px;
+            width: 100px;
+            border: 2px solid blue;
+            background-color: #4CAF50;
+            color: white;
+            font-size: large;
+        }
+
+        .weather-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .weather-card {
+            background-color: #e7f3fe;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .weather-card h3 {
+            margin: 0 0 10px;
+        }
+
+        .weather-card img {
+            vertical-align: middle;
+        }
+        .big{
+            width:99%;
+            height:95vh;
+            float:left;
+            border:2px solid grey;
+            overflow-y: scroll;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="big">
+    <header>
+        <h1>5-Day Weather Forecast</h1>
+        <input type="text" id="city-input" placeholder="Enter city">
+        <button id="search-btn">Search</button>
+    </header>
+
+    <div id="weather-container" class="weather-container"></div>
+</div>
+    <script>
+        const apiKey = '7528a958807c8245cdce61f51a1b98d4'; 
+
+        document.getElementById('search-btn').addEventListener('click', getWeatherForecast);
+
+        async function getWeatherForecast() {
+            const city = document.getElementById('city-input').value;
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`City not found`);
+                const data = await response.json();
+                displayWeatherForecast(data);
+            } catch (error) {
+                document.getElementById('weather-container').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        function displayWeatherForecast(data) {
+            const weatherContainer = document.getElementById('weather-container');
+            weatherContainer.innerHTML = '';
+
+     
+            const dailyData = data.list.filter((reading, index) => index % 8 === 0).slice(0, 10);
+
+            dailyData.forEach(day => {
+                const date = new Date(day.dt_txt);
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+                const weatherHTML = `
+                    <div class="weather-card">
+                        <h3>${dayName}</h3>
+                        <p>Temperature: ${day.main.temp}°C</p>
+                        <p>Condition: ${day.weather[0].description}</p>
+                        <img src="https://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png" alt="Weather icon">
+                    </div>
+                `;
+
+                weatherContainer.innerHTML += weatherHTML;
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hourly Weather</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #e0f7fa;
+        
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #0288d1;
+           
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .hourly-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .hourly-section {
+            background-color: #e3f2fd;
+        
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .hourly-section:hover {
+            transform: translateY(-5px);
+          
+        }
+
+        .hourly-row {
+            display: flex;
+            overflow-x: auto;
+            padding: 10px 0;
+           
+        }
+
+        .hour {
+            flex: 0 0 auto;
+            min-width: 120px;
+  
+            padding: 15px;
+            text-align: center;
+            margin-right: 15px;
+            border: 1px solid #90caf9;
+         
+            border-radius: 5px;
+            background-color: #bbdefb;
+       
+            transition: background-color 0.3s;
+        }
+
+        .hour:hover {
+            background-color: #64b5f6;
+        }
+
+        .hour-time {
+            display: block;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .weather-icon {
+            width: 60px;
+       
+            height: 60px;
+            margin: 5px 0;
+        }
+
+        .temperature {
+            display: block;
+            font-size: 1.8rem;
+            margin: 5px 0;
+            color: #1976d2;
+          
+        }
+
+        .condition {
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Hourly Weather Forecast</h1>
+    </header>
+
+    <div class="hourly-container">
+        
+    </div>
+
+    <script>
+        const apiKey = '7528a958807c8245cdce61f51a1b98d4';
+        const city = 'London'; 
+        const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+
+
+
+
+
+        async function getHourlyWeather() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                updateHourlyForecast(data);
+            } catch (error) {
+                console.error('There has been a problem with your fetch operation:', error);
+            }
+        }
+
+        function updateHourlyForecast(data) {
+            const hourlyContainer = document.querySelector('.hourly-container');
+            hourlyContainer.innerHTML = ''; 
+
+            const now = new Date();
+            const startOfToday = new Date(now.setHours(0, 0, 0, 0)); 
+            const endOfTomorrow = new Date(startOfToday);
+            endOfTomorrow.setHours(47, 0, 0, 0); 
+
+           
+            const hourlyData = data.list.filter(item => {
+                const itemDate = new Date(item.dt * 1000);
+                return itemDate >= startOfToday && itemDate <= endOfTomorrow;
+            });
+
+       
+            const groupedData = {
+                today: [],
+                tomorrow: []
+            };
+
+            hourlyData.forEach(item => {
+                const itemDate = new Date(item.dt * 1000);
+                if (itemDate.getDate() === startOfToday.getDate()) {
+                    groupedData.today.push(item);
+                } else {
+                    groupedData.tomorrow.push(item);
+                }
+            });
+
+         
+            const createHourlySection = (data, title) => {
+                const section = document.createElement('div');
+                section.className = 'hourly-section';
+
+                const heading = document.createElement('h3');
+                heading.textContent = title;
+                section.appendChild(heading);
+
+                const row = document.createElement('div');
+                row.className = 'hourly-row';
+
+                data.forEach(item => {
+                    const hourDiv = document.createElement('div');
+                    hourDiv.className = 'hour';
+
+                    const date = new Date(item.dt * 1000);
+                    const options = { hour: 'numeric', minute: 'numeric', hour12: true };
+                    const hourTime = date.toLocaleString('en-US', options);
+
+                    hourDiv.innerHTML = `
+                <span class="hour-time">${hourTime}</span>
+                <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png" alt="Weather Icon" class="weather-icon">
+                <span class="temperature">${item.main.temp}°C</span>
+                <span class="condition">${item.weather[0].description}</span>
+            `;
+
+                    row.appendChild(hourDiv);
+                });
+
+                section.appendChild(row);
+                hourlyContainer.appendChild(section);
+            };
+
+        
+            createHourlySection(groupedData.today, `Today (${startOfToday.toLocaleDateString()})`);
+            createHourlySection(groupedData.tomorrow, `Tomorrow (${endOfTomorrow.toLocaleDateString()})`);
+        }
+
+     
+        getHourlyWeather();
+
+    </script>
+</body>
+
+</html>

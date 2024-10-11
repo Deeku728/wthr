@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Weather</title>
+    <style>
+       
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        header input{
+            width:400px;
+            height:50px;
+            border:2px solid blue;
+            font-size: larger;
+        }
+        .big button{
+            height:55px;
+            width:100px;
+            padding: 20px;
+            margin-top: 20px;
+            border:2px solid blue;
+        }
+        .weather-info{
+            padding: 20px;
+            background: #e7f3fe;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .big{
+            width:99%;
+            height:95vh;
+            float:left;
+            border:2px solid grey;
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+    <div class="big">
+    <header>
+       
+        <h1>Today's Weather</h1>
+        <input type="text" id="city-input" placeholder="Enter city" />
+        <button id="search-btn">Search</button>
+    </header>
+    <div id="weather-info"></div>
+</div>
+    <script>
+        const apiKey = '7528a958807c8245cdce61f51a1b98d4';
+
+        document.getElementById('search-btn').addEventListener('click', getWeather);
+
+        async function getWeather() {
+            const city = document.getElementById('city-input').value || getQueryParameter('city');
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`City not found`);
+                const data = await response.json();
+                displayWeather(data);
+            } catch (error) {
+                document.getElementById('weather-info').innerText = `Error: ${error.message}`;
+            }
+        }
+
+        function displayWeather(data) {
+            document.getElementById('weather-info').innerHTML = `
+                <h2>Weather in ${data.name}</h2>
+                <p>Temperature: ${data.main.temp}°C</p>
+                <p>Condition: ${data.weather[0].description}</p>
+                <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
+            `;
+        }
+
+        function getQueryParameter(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const city = getQueryParameter('city');
+            if (city) {
+                document.getElementById('city-input').value = city;
+                getWeather();
+            }
+        });
+    </script>
+</body>
+
+</html>

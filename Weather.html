@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Early Weather Updates</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 12px;
+            }
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 1rem;
+        }
+
+        .upper-container,
+        .mid-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 0;
+        }
+
+        .upper-container section {
+            flex: 1;
+            text-align: center;
+            margin: 0 1rem;
+            padding: 1rem;
+            background: #e7f3fe;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .upper-container button {
+            width: 300px;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            background: #0066cc;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bolder;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            text-transform: uppercase;
+        }
+
+        .mid-container {
+            margin-top: 2rem;
+        }
+
+        .left,
+        .right {
+            flex: 1;
+            padding: 1rem;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .vertical-line {
+            width: 2px;
+            background-color: #ccc;
+            margin: 0 1rem;
+        }
+
+        .cities button,
+        .air-quality button,
+        .SUN-MOON button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: none;
+            background: #0066cc;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            text-transform: uppercase;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        .cities button:hover,
+        .air-quality button:hover,
+        .SUN-MOON button:hover {
+            background: #005bb5;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-box {
+            padding: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .search-button {
+            padding: 10px 20px;
+            margin-left: 5px;
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background: #005bb5;
+        }
+
+        .flex-container {
+
+            height: 200px;
+            width: 70%;
+            border: 2px solid blue;
+            text-align: center;
+            display: flex;
+            margin-left: 200px;
+            align-items: first baseline;
+            justify-content: left;
+            justify-items: left;
+        }
+
+        .flex-container p {
+            font-size: 15px;
+            font-weight: bolder;
+            font-style: inherit;
+            color: rgb(144, 144, 168)
+        }
+
+        .midicontiner {
+            text-align: center;
+            padding: 1rem;
+            background: #e7f3fe;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-weight: bold;
+        }
+
+        .cloudy-pic,
+        .umbrella-pic {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .hourly-weather {
+            margin-top: 2rem;
+            background: #e7f3fe;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .hourly-weather h4 {
+            text-align: center;
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .hourly-weather table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .hourly-weather th,
+        .hourly-weather td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .hourly-weather th {
+            background-color: #0066cc;
+            color: white;
+        }
+
+        .hourly-weather td {
+            background-color: #f0f8ff;
+        }
+
+        .hourly-weather button {
+            padding: 10px;
+
+            background: #0066cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 10%;
+            width: 60vw;
+            text-transform: uppercase;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+
+        }
+
+        .hourly-weather button:hover {
+            background: #005bb5;
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-container {
+            margin-top: 10px;
+        }
+
+        .search-box {
+            padding: 10px;
+            border: 2px solid blue;
+            font-size: large;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 10px;
+            border: 2px solid blue;
+            background-color: #4CAF50;
+            color: white;
+            font-size: large;
+        }
+
+        .weather-info {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e7f3fe;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: none;
+
+        }
+
+
+ @media (max-width: 768px) {
+            .upper-container section {
+                flex: 1 1 100%; 
+            }
+
+            .upper-container button,
+            .search-button {
+                font-size: 14px; 
+            }
+
+            .search-box {
+                width: 60%; 
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                font-size: 18px; 
+            }
+
+            .upper-container button {
+                font-size: 14px; 
+            }
+
+            .search-box {
+                width: 100%; 
+            }
+
+            .hourly-weather h4 {
+                font-size: 18px; 
+            }
+        }
+
+
+
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="container">
+            <h1>EARLY WEATHER UPDATES</h1>
+            <nav>
+                <ul>
+                    <li><a href="#">TEMPERATURE</a></li>
+                    <li><a href="#">HUMIDITY</a></li>
+                    <li><a href="#">SUNRISE</a></li>
+                    <li><a href="#">SUNSET</a></li>
+                    <li><a href="#">UV</a></li>
+                    <li><a href="#">PRESSURE</a></li>
+                    <li><a href="#">PLACE</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="upper-container">
+            <section id="today-weather">
+                <button id="today-btn">Today’s Weather</button>
+                <p>Get today's weather details.</p>
+                <div id="today-weather-info" style="display: none;">
+                    <p id="today-temp"></p>
+                    <p id="today-condition"></p>
+                </div>
+            </section>
+            <section id="tomorrow-weather">
+                <button id="tomorrow-btn">Tomorrow’s Weather</button>
+                <p>Get tomorrow's weather details.</p>
+                <div id="tomorrow-weather-info" style="display: none;">
+                    <p id="tomorrow-temp"></p>
+                    <p id="tomorrow-condition"></p>
+                </div>
+            </section>
+            <section id="10days-weather">
+                <button id="next10days-btn">Next 5 Days Weather</button>
+                <p>Get the next 5 days' weather details.</p>
+            </section>
+        </div>
+
+
+        <div class="flex-container">
+            <p>♦TYPE THE NAME OF YOUR PLACE TO CHECK WEATHER♦</p>
+            <div class="search-container">
+                <input type="search" class="search-box" placeholder="Search here......." id="city-input">
+                <button class="search-button" id="search-btn">Search</button>
+            </div>
+        </div>
+
+        <div class="current-weather" id="current-weather-info"></div>
+
+        <div class="mid-container">
+            <div class="left">
+                <h2>LATEST WEATHER OF FAMOUS CITIES</h2>
+                <ol class="cities">
+
+                    <li><button onclick="openWeather('Mumbai')">Mumbai</button></li>
+                    <li><button onclick="openWeather('Kolkata')">Kolkata</button></li>
+                    <li><button onclick="openWeather('Delhi')">Delhi</button></li>
+                    <li><button onclick="openWeather('Chennai')">Chennai</button></li>
+                    <li><button onclick="openWeather('Lucknow')">Lucknow</button></li>
+                    <li><button onclick="openWeather('Bangalore')">Bengaluru</button></li>
+                    <li><button onclick="openWeather('Ahmedabad')">Ahmedabad</button></li>
+                    <li><button onclick="openWeather('Chandigarh')">Chandigarh</button></li>
+                </ol>
+            </div>
+            <div class="vertical-line"></div>
+            <div class="right">
+                <h2>MORE TO KNOW</h2>
+                <div class="air-quality">
+                    <button>AIR QUALITY TODAY</button>
+
+                </div>
+                <div class="SUN-MOON">
+
+                    <button class="sun-moon" data-event="sunrise">Sunrise</button>
+                    <button class="sun-moon" data-event="sunset">Sunset</button>
+                    <button class="sun-moon" data-event="moonrise">Moonrise</button>
+
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="hourly-weather">
+            <h4> CLICK BELOW TO SEE.....♦ THIS DAY HOURLY WEATHER INFORMATION ♦</h4>
+            <button onclick="openHourlyWeather()">See Full Hourly Weather</button>
+
+            <tbody id="hourly-weather-data">
+
+            </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.getElementById('today-btn').addEventListener('click', function () {
+                window.location.href = '../templates/today.html';
+            });
+
+            document.getElementById('tomorrow-btn').addEventListener('click', function () {
+                window.location.href = '../templates/tomorrow.html';
+            });
+
+            document.getElementById('next10days-btn').addEventListener('click', function () {
+                window.location.href = '../templates/5 days.html';
+            });
+
+
+            document.querySelector('.search-button').addEventListener('click', function () {
+                const city = document.querySelector('.search-box').value;
+                if (city) {
+                    getWeather(city);
+                }
+            });
+        });
+
+        function openAirQuality() {
+            window.open('air quality.html', '_self');
+        }
+
+
+        function openAstro() {
+            window.open('astro.html', '_self');
+        }
+
+
+        document.querySelector('.air-quality button').addEventListener('click', openAirQuality);
+
+
+        document.querySelector('.SUN-MOON button').addEventListener('click', openAstro);
+
+
+
+        function getWeather(city) {
+            const apiKey = '7528a958807c8245cdce61f51a1b98d4';
+            const todayUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
+            const tomorrowUrl = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=2`;
+
+
+            fetch(todayUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('today-temp').innerText = `Temperature: ${data.current.temp_c}°C`;
+                    document.getElementById('today-condition').innerText = `Condition: ${data.current.condition.text}`;
+                    document.getElementById('today-weather-info').style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching today’s weather:', error));
+
+
+            fetch(tomorrowUrl)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('tomorrow-temp').innerText = `Temperature: ${data.forecast.forecastday[1].day.avgtemp_c}°C`;
+                    document.getElementById('tomorrow-condition').innerText = `Condition: ${data.forecast.forecastday[1].day.condition.text}`;
+
+                    document.getElementById('tomorrow-weather-info').style.display = 'block';
+                })
+                .catch(error => console.error('Error fetching tomorrow’s weather:', error));
+        }
+
+        function openWeather(city) {
+            window.location.href = `wiii.html?city=${encodeURIComponent(city)}`;
+
+
+            function getQueryParameter(name) {
+                const params = new URLSearchParams(window.location.search);
+                return params.get(name);
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const city = getQueryParameter('city');
+                if (city) {
+                    getWeather(city);
+                } else {
+                    document.getElementById('weather-info').innerText = 'No city selected';
+                }
+            });
+
+        }
+
+        document.getElementById('search-btn').addEventListener('click', function () {
+            const city = document.getElementById('city-input').value;
+            window.location.href = `today.html?city=${encodeURIComponent(city)}`;
+        });
+        function openHourlyWeather() {
+            window.location.href = 'hourr.html';
+        }
+
+        document.getElementById('search-btn').addEventListener('click', getWeather);
+
+        async function getWeather() {
+            const city = document.getElementById('city-input').value;
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`City not found`);
+                const data = await response.json();
+                displayWeather(data);
+            } catch (error) {
+                document.getElementById('weather-info').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+
+
+            document.querySelector('.search-button').addEventListener('click', function () {
+                const city = document.querySelector('.search-box').value;
+                if (city) {
+                    getWeather(city);
+                }
+            });
+        });
+
+        function getWeather(city) {
+            const apiKey = '7528a958807c8245cdce61f51a1b98d4';
+            const apiUrl = `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${city}`;
+
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.location && data.current) {
+                        displayCurrentWeather(data);
+                    } else {
+                        document.getElementById('current-weather-info').innerHTML = `<p>Error: Invalid response structure from API.</p>`;
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('current-weather-info').innerHTML = `<p>Error fetching weather: ${error.message}</p>`;
+                });
+        }
+
+        function displayCurrentWeather(data) {
+            const weatherInfo = document.getElementById('current-weather-info');
+            weatherInfo.style.display = 'block';
+            weatherInfo.innerHTML = `
+                <h2>Current Weather in ${data.location.name}</h2>
+                <p>Temperature: ${data.current.temp_c}°C</p>
+                <p>Condition: ${data.current.condition.text}</p>
+                <img src="https:${data.current.condition.icon}" alt="Weather Icon">
+            `;
+        }
+
+        function redirectToAstro(eventType) {
+
+            const astroPageUrl = `astro.html#${eventType}-section`;
+
+
+            window.location.href = astroPageUrl;
+        }
+
+
+        document.querySelectorAll('.sun-moon').forEach(button => {
+            button.addEventListener('click', function () {
+
+                const eventType = this.getAttribute('data-event');
+
+                redirectToAstro(eventType);
+            });
+        });
+    </script>
+</body>
+
+</html>

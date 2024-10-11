@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather for Cities</title>
+    <link rel="stylesheet" href="weather.css">
+    <style>
+       body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #81d4fa);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            background-color: #01579b;
+            color: white;
+            padding: 1.5rem 0;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        #weather-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .city-weather {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            width: 100%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .city-weather h2 {
+            color: #01579b;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .city-weather p {
+            font-size: 20px;
+        }
+
+        .city-weather .temperature {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0288d1;
+        }
+
+        .city-weather .condition {
+            font-size: 10.0rem;
+            color: #039be5;
+        }
+
+        .city-weather img {
+            width: 80px;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        .city-weather:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        h2 {
+            color: #01579b;
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .temperature {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #0288d1;
+        }
+
+        .condition {
+            font-size: 1.2rem;
+            color: #039be5;
+        }
+
+        img {
+            width: 80px;
+            height: auto;
+            margin-top: 10px;
+        }
+
+        .cities {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cities h2 {
+            color: #01579b;
+            margin-bottom: 15px;
+        }
+
+        .cities ol {
+            display: flex;
+            flex-direction: row;
+            list-style-type: none;
+            padding: 0;
+            justify-content: space-evenly;
+        }
+
+        .cities button {
+            background-color: #0277bd;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 150px;
+            transition: background 0.3s, transform 0.2s;
+            margin: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .cities button:hover {
+            background-color: #01579b;
+            transform: scale(1.05);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #666;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+        }
+  
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Weather Information</h1>
+  
+    </header>
+
+    <div class="container">
+        <div id="weather-info">
+           
+        </div>
+
+        <div class="cities">
+            <h2>Weather of Famous Cities</h2>
+            <ol>
+                <li><button onclick="getWeather('Mumbai')">Mumbai</button></li>
+                <li><button onclick="getWeather('Kolkata')">Kolkata</button></li>
+                <li><button onclick="getWeather('Delhi')">Delhi</button></li>
+                <li><button onclick="getWeather('Chennai')">Chennai</button></li>
+                <li><button onclick="getWeather('Lucknow')">Lucknow</button></li>
+                <li><button onclick="getWeather('Bangalore')">Bengaluru</button></li>
+                <li><button onclick="getWeather('Ahmedabad')">Ahmedabad</button></li>
+                <li><button onclick="getWeather('Chandigarh')">Chandigarh</button></li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        async function getWeather(city) {
+            const apiKey = '7528a958807c8245cdce61f51a1b98d4';
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('City not found');
+                }
+                const data = await response.json();
+                displayWeather(data);
+            } catch (error) {
+                document.getElementById('weather-info').innerText = error.message;
+            }
+        }
+
+        function displayWeather(data) {
+            const weatherContainer = document.getElementById('weather-info');
+            weatherContainer.innerHTML = `
+                <h2>Weather in ${data.name}</h2>
+                <p>Temperature: ${data.main.temp}°C</p>
+                <p>Condition: ${data.weather[0].description}</p>
+                <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
+            `;
+        }
+
+        function getQueryParameter(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const city = getQueryParameter('city');
+            if (city) {
+                getWeather(city);
+            } else {
+                document.getElementById('weather-info').innerText = 'No city selected';
+            }
+        });
+    </script>
+</body>
+
+</html>

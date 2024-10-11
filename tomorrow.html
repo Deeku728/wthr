@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomorrow's Weather</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #0066cc;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+        }
+
+        header input {
+            width: 400px;
+            height: 50px;
+            border: 2px solid blue;
+            font-size: larger;
+        }
+
+        .big button {
+            height: 55px;
+            width: 100px;
+            padding: 20px;
+            margin-top: 20px;
+            border: 2px solid blue;
+        }
+
+        .weather-info {
+        
+            padding: 20px;
+            background: #e7f3fe;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .big {
+            width: 99%;
+            height: 94vh;
+            float: left;
+            border: 2px solid grey;
+        }
+
+        img {
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="big">
+        <header>
+            <h1>Tomorrow's Weather</h1>
+            <input type="text" id="city-input" placeholder="Enter city" />
+            <button id="search-btn">Search</button>
+        </header>
+        <div id="weather-info" class="weather-info"></div>
+    </div>
+
+    <script>
+        const apiKey = '7528a958807c8245cdce61f51a1b98d4'; 
+
+        document.getElementById('search-btn').addEventListener('click', getTomorrowWeather);
+
+        async function getTomorrowWeather() {
+            const city = document.getElementById('city-input').value;
+            if (!city) {
+                alert("Please enter a city.");
+                return;
+            }
+
+         
+            const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=metric&appid=${apiKey}`;
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) throw new Error(`City not found`);
+                const data = await response.json();
+                displayTomorrowWeather(data);
+            } catch (error) {
+                document.getElementById('weather-info').innerText = `Error: ${error.message}`;
+            }
+        }
+
+        function displayTomorrowWeather(data) {
+     
+            const tomorrowDate = new Date();
+            tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+            const tomorrowDateString = tomorrowDate.toISOString().split('T')[0];
+
+         
+            const tomorrowWeatherData = data.list.filter(item => item.dt_txt.startsWith(tomorrowDateString));
+
+            if (tomorrowWeatherData.length > 0) {
+                const weatherInfo = tomorrowWeatherData[0]; 
+                const description = weatherInfo.weather[0].description;
+                const temp = weatherInfo.main.temp;
+                const icon = weatherInfo.weather[0].icon;
+
+                document.getElementById('weather-info').innerHTML = `
+                    <h2>Weather in ${data.city.name} on ${tomorrowDateString}</h2>
+                    <p>Temperature: ${temp}°C</p>
+                    <p>Condition: ${description}</p>
+                    <img src="https://openweathermap.org/img/wn/${icon}@2x.png" alt="Weather Icon">
+                `;
+            } else {
+                document.getElementById('weather-info').innerText = "No weather data available for tomorrow.";
+            }
+        }
+    </script>
+</body>
+
+</html>
