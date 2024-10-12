@@ -32,7 +32,7 @@ Clone the repository:
 
 bash
 Copy code
-git clone https://github.com/yourusername/weather-forecasting.git
+git clone https://github.com/deeku728/wthr.git
 Open index.html in your browser.
 
 Ensure that the weather API is functioning by setting up your API key in the JavaScript file.
