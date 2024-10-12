@@ -1,5 +1,7 @@
 # wthr
 Weather Forecasting Website
+
+
 Project Overview
 This is a responsive web application that provides real-time weather information for multiple locations. Users can view weather forecasts for today, tomorrow, and the next 10 days, along with hourly updates. The site features dynamic data fetched from a weather API, offering detailed information such as temperature, humidity, wind speed, and other key metrics. The design is user-friendly, mobile-responsive, and visually appealing.
 
